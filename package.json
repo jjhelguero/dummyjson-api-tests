@@ -1,0 +1,11 @@
+{
+  "name": "dummyjson-api-tests",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "pactum": "3.2.2"
+  },
+  "scripts": {
+    "test": "as-a auth jest"
+  },
+  "packageManager": "npm@10.8.1+sha512.0e9d42e92bd2318408ed81eaff2da5f78baf23ee7d12a6eed44a6e2901d0f29d7ab715d1b918ade601f72e769a824d9a5c322383f22bbbda5dd396e79de2a077"
+}
