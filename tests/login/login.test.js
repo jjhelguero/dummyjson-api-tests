@@ -36,7 +36,7 @@ describe("/auth/login", () => {
         const data = ctx.res.body;
 
         const valid = validate(data);
-        if (!valid) console.log(validate.errors);
+        expect(valid).toBe(true);
       });
   });
 
