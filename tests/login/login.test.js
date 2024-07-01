@@ -4,6 +4,7 @@ const Ajv = require("ajv");
 request.setBaseUrl("https://dummyjson.com");
 const username = process.env.ADMIN_USERNAME;
 const password = process.env.ADMIN_PASSWORD;
+const ajv = new Ajv();
 
 describe("/auth/login", () => {
   it("should log in with a response with status code 200", async () => {
@@ -21,6 +22,38 @@ describe("/auth/login", () => {
       .withJson({ username, password })
       .expect((ctx) => {
         expect(ctx.res.body).toHaveProperty("token");
+      });
+  });
+
+  it("should have correct json schema", async () => {
+    await spec()
+      .post("/auth/login")
+      .withHeaders("Content-Type", "application/json")
+      .withJson({ username, password })
+      .expect((ctx) => {
+        const schema = {
+          type: "object",
+          properties: {
+            id: { type: "integer" },
+            username: { type: "string" },
+            email: { type: "string" },
+            firstName: { type: "string" },
+            lastName: { type: "string" },
+            gender: { type: "string" },
+            image: { type: "string" },
+            token: { type: "string" },
+            refreshToken: { type: "string" },
+          },
+          required: ["id", "username"],
+          additionalProperties: false,
+        };
+
+        const validate = ajv.compile(schema);
+
+        const data = ctx.res.body;
+
+        const valid = validate(data);
+        if (!valid) console.log(validate.errors);
       });
   });
 
