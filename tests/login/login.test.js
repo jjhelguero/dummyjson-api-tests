@@ -1,4 +1,5 @@
 const { spec, request } = require("pactum");
+const Ajv = require("ajv");
 
 request.setBaseUrl("https://dummyjson.com");
 const username = process.env.ADMIN_USERNAME;
