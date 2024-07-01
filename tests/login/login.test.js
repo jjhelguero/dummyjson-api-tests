@@ -23,6 +23,22 @@ describe("/auth/login", () => {
         expect(ctx.res.body).toHaveProperty("token");
       });
   });
+
+  it("should not log in with invalid username", async () => {
+    await spec()
+      .post("/auth/login")
+      .withHeaders("Content-Type", "application/json")
+      .withJson({ username: "invalid-username", password })
+      .expectStatus(400, "Bad Request");
+  });
+
+  it("should not log in with invalid password", async () => {
+    await spec()
+      .post("/auth/login")
+      .withHeaders("Content-Type", "application/json")
+      .withJson({ username, password: "invalid-password" })
+      .expectStatus(400, "Bad Request");
+  });
 });
 
 describe("/auth/me", () => {
@@ -45,7 +61,7 @@ describe("/auth/me", () => {
     refreshToken = r;
   });
 
-  it("should have get current auth user", async () => {
+  it("should get current auth user", async () => {
     await spec()
       .get("/auth/me")
       .withHeaders("Authorization", `Bearer ${token}`)
@@ -58,6 +74,21 @@ describe("/auth/me", () => {
       .withHeaders("Content-Type", "application/json")
       .withJson({ refreshToken })
       .expectStatus(200, "OK");
+  });
+
+  it("should not get current auth user with invalid token", async () => {
+    await spec()
+      .get("/auth/me")
+      .withHeaders("Authorization", `Bearer ${token}+1`)
+      .expectStatus(500);
+  });
+
+  it("should not refresh auth session with invalid refresh token", async () => {
+    await spec()
+      .post("/auth/refresh")
+      .withHeaders("Content-Type", "application/json")
+      .withJson({ refreshToken: refreshToken + "+1" })
+      .expectStatus(403);
   });
 });
 
