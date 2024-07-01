@@ -1,5 +1,6 @@
 const { spec, request } = require("pactum");
 const Ajv = require("ajv");
+const schema_authLogin = require("../schemas/auth-login.json");
 
 request.setBaseUrl("https://dummyjson.com");
 const username = process.env.ADMIN_USERNAME;
@@ -31,25 +32,7 @@ describe("/auth/login", () => {
       .withHeaders("Content-Type", "application/json")
       .withJson({ username, password })
       .expect((ctx) => {
-        const schema = {
-          type: "object",
-          properties: {
-            id: { type: "integer" },
-            username: { type: "string" },
-            email: { type: "string" },
-            firstName: { type: "string" },
-            lastName: { type: "string" },
-            gender: { type: "string" },
-            image: { type: "string" },
-            token: { type: "string" },
-            refreshToken: { type: "string" },
-          },
-          required: ["id", "username"],
-          additionalProperties: false,
-        };
-
-        const validate = ajv.compile(schema);
-
+        const validate = ajv.compile(schema_authLogin);
         const data = ctx.res.body;
 
         const valid = validate(data);
